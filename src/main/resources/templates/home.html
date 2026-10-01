@@ -1,0 +1,10 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::content})}">
+  <body>
+    <!--/* The base home page: nothing here until a feature adds itself. A page is a new template
+           + a new YAML route + a new logic class, and its nav link is a new NavEntry @Component. */-->
+    <main data-testid="app-home" th:fragment="content">
+      <p data-testid="home-empty">Nothing here yet.</p>
+    </main>
+  </body>
+</html>

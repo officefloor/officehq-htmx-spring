@@ -6,11 +6,12 @@ This is a **base repository** for `ui-long-degradation-test` (see that repo's `D
 one full-stack English change request per checkpoint — committing each checkpoint on that run
 branch. The base branch is only ever read.
 
-This stack is **React (front-end) + OfficeFloor (backend)** on in-memory H2 — hence the name
-`officehq-react-officefloor`.
+This stack is **server-rendered Thymeleaf + htmx (UI) + OfficeFloor (backend)** on in-memory H2 —
+hence the name `officehq-htmx-officefloor`. There is NO front-end build and no Node toolchain: an
+OfficeFloor procedure takes Spring's `Model` plus OfficeFloor's `ViewResponse` and sends a template
+name (tutorial SpringRestThymeleafHttpServer), and htmx is a vendored file under `static/vendor/`.
 
-**This folder is a skeleton: every item below is a stub with `TODO` markers.** Fill them in to get
-a runnable base. Because the harness only depends on the *contract* (not the tech), you create a
+**This folder is green** (§A–§H verified; see the UI notes in §B and §E). Because the harness only depends on the *contract* (not the tech), you create a
 new stack as a **home-level sibling** `~/officehq-<frontend>-<backend>` (name both layers, since
 either may vary), satisfy the same checklist with a different technology, and point `app.repo` at
 it — that is how different technology stacks are compared, one run each, to see which resists
@@ -42,9 +43,16 @@ boot, a static-served SPA, an `/actuator/health` readiness probe, and the `/__te
       the JVM.
 - [ ] **Flyway on boot** (`spring.flyway.enabled=true`, `ddl-auto=none`), from
       `src/main/resources/db/migration` — builds the schema up from empty.
-- [ ] **SPA served from `src/main/resources/static`** (Spring serves `static/`); `src/main/frontend`
-      builds into `static/`. SPA deep-link fallback is `SpaConfig.java` (unknown non-`api/` →
-      `index.html`).
+- [x] **No SPA and no SPA fallback.** The React arms need `SpaConfig` so a refreshed deep link
+      returns `index.html`; here every URL is a real server route, so an unknown path correctly
+      404s and a refresh re-renders from the server. `static/` is not build output in this stack —
+      it holds the vendored htmx, which IS committed (the build and the gate have no network
+      egress, so a CDN is not an option).
+- [x] **One URL per YAML file, for pages as well as data.** `officefloor/rest/<path>.<METHOD>.yml`
+      + a logic class + a Thymeleaf template under `templates/`. No `/api/` prefix is needed.
+- [x] **The nav is additive without a registry file.** A page contributes a `NavEntry`
+      `@Component`; Spring injects the whole collection into `NavRegistry`, and `layout.html` reads
+      it as `${@navRegistry.entries()}`. The layout never lists the pages.
 - [ ] **`/actuator/health`** (Spring Actuator) — the harness readiness probe
       (`config.yaml → app.health_url`).
 - [ ] No external services, no network egress needed to build/boot (toolchain resolvable offline
@@ -92,8 +100,11 @@ These commands must stay constant across checkpoints even as the app evolves. Th
 
 - [ ] `CLAUDE.md` (and `AGENTS.md`) tell the agent: it is making a **full-stack** change
       (migration + OfficeFloor server + front-end) from a plain-English request; the `data-testid`
-      immutability rule; that it can run `bin/e2e` to test; the additive/opinionated conventions of
-      the shell (routing, no global store, closed primitives, slice boundaries, scoped styles).
+      immutability rule; that it can run `bin/e2e` to test; and the additive conventions of the
+      shell. For this arm those are the **five UI rules** (a page is a YAML route + a procedure +
+      a template; its nav link is a `NavEntry` `@Component`; a partial update is the same three
+      files returning a fragment, reached by `hx-get`/`hx-target`; state that outlives a click is
+      in the URL via `@RequestParam`; never JSON for the UI and never a client-side domain model).
 - [ ] These never leak the checkpoint sequence (no cpNN references, no prior-request hints).
 
 ## F. Layout the harness expects (matches `config.yaml`)
@@ -106,8 +117,8 @@ src/main/resources/application.properties         # H2 + Flyway + Actuator
 src/main/resources/officefloor/rest/**/*.yml      # additive OfficeFloor REST routes (shared_surfaces.backend)
 src/main/resources/db/migration/                  # Flyway migrations (empty at base)
 src/main/resources/static/                         # SPA build output, served by Spring
-src/main/frontend/**/*.{ts,tsx}                   # front-end source (source_globs.frontend); builds into static/
-src/main/frontend/{router,ui}/                     # shared_surfaces.frontend
+src/main/resources/templates/**/*.html            # the UI (source_globs.frontend) — NOT parseable by lizard
+src/main/resources/static/vendor/**               # vendored htmx (committed; no CDN at build or run)
 e2e/{playwright.config.ts,package.json,support/}  # Playwright project (specs copied in per cp)
 CLAUDE.md, AGENTS.md                               # pinned agent instructions
 ```
