@@ -1,4 +1,0 @@
-# GET /home -> HomeView.service(...) -> renders templates/home.html
-# A page is ONE new file here, never an edit to a central router (DESIGN.md §8).
-service:
-  class: net.officefloor.hq.app.HomeView

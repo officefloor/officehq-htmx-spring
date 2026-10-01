@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  react-officefloor base app. Model: SPRING BOOT 4 hosts; OfficeFloor REST is added via the
-  OfficeFloor Spring Boot 4 starter. Domain REST endpoints are additive OfficeFloor YAML
-  (src/main/resources/officefloor/rest/*.GET.yml -> a logic class); Spring serves the SPA (static/),
-  H2 + Flyway + Actuator. Coordinates VERIFIED against OfficeFloor tutorials
-  (tutorials/springboot/SpringRestGettingStartedHttpServer, SpringRestDataJpaHttpServer) and the
-  OfficeFloor BOM (net.officefloor:bom @ revision 4.0.2: spring-version=4.1.0).
+  htmx-spring base app. Server-rendered Thymeleaf + htmx on a plain Spring Boot 4 backend — no
+  OfficeFloor. Pages are @Controller methods returning a template name; H2 + Flyway + Actuator.
+
+  This arm FALSIFIES OR CONFIRMS the inheritance claim. The htmx-officefloor arm's front-end
+  additivity was argued to be INHERITED from its additive backend rather than engineered into the
+  client. Against that arm only the backend differs:
+    * if htmx-officefloor holds and this one does not, inheritance is demonstrated;
+    * if BOTH hold, hypermedia is additive on its own — the most practically useful result in the
+      set, since the pattern would then work without adopting OfficeFloor.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <!-- Standard Spring Boot app parent. Spring Boot 4.1.0 = the SB4 line in the OfficeFloor BOM
-       (net.officefloor:bom @ 4.0.2, spring-version=4.1.0). VERIFIED to resolve via `mvn dependency:
-       resolve` (BUILD SUCCESS): parent + all deps + build plugins resolve from Maven Central. -->
+  <!-- Held at Spring Boot 4.1.0, the same host every other arm runs, so only the architecture
+       differs between arms. -->
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
@@ -29,21 +31,10 @@
 
   <properties>
     <java.version>17</java.version>
-    <!-- OfficeFloor current release (net.officefloor:bom revision). VERIFIED: officefloor-rest-
-         spring-boot-4-starter:4.0.2 resolves. NOTE: its jar has no automatic module name ('4' is
-         not a valid Java identifier) — harmless on the classpath; would matter only for JPMS. -->
-    <officefloor.version>4.0.2</officefloor.version>
   </properties>
 
   <dependencies>
-    <!-- OfficeFloor REST inside Spring Boot 4: add this + write officefloor/rest/*.yml.
-         Domain endpoints are additive OfficeFloor YAML (the property under test). -->
-    <dependency>
-      <groupId>net.officefloor.springboot</groupId>
-      <artifactId>officefloor-rest-spring-boot-4-starter</artifactId>
-      <version>${officefloor.version}</version>
-    </dependency>
-
+    <!-- No OfficeFloor: pages and fragments are Spring MVC @Controller methods. -->
     <!-- Spring Boot hosts: web (serves the SPA from static/ + hosts the HTTP server),
          data-jpa (H2 access for services), actuator (health probe). -->
     <dependency>

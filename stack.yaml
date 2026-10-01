@@ -1,6 +1,12 @@
 # What this STACK is, for the harness (~/ui-long-degradation-test). Read at `base-empty`, never
 # from the working tree, so a run always measures the layers the base declared.
 #
+# This arm tests the INHERITANCE claim: htmx-officefloor's front-end additivity was argued to be
+# inherited from its additive backend rather than engineered into the client. Against that arm only
+# the backend differs (pages are @Controller methods, not wired OfficeFloor procedures), so if that
+# arm holds and this one does not, inheritance is demonstrated; if BOTH hold, hypermedia is
+# additive on its own — which would be the most practically useful result in the set.
+#
 # ── READ THIS BEFORE COMPARING THIS ARM'S front-end NUMBERS ──────────────────────────────────
 # This stack's user interface is Thymeleaf MARKUP, and Lizard cannot parse HTML. So for the
 # frontend layer every PARSER-derived column is blank by construction — erosion, impact_*, wmc_*,
@@ -30,11 +36,11 @@ layers:
     root: src/main/java
     ext: [java]
     jscpd_format: java
-    # Every OfficeFloor procedure reached through a `service(...)` method — which in this stack
-    # includes the page-rendering ones, so the entry-surface metrics cover the UI's logic.
-    handler_pattern: "::service$"
-    config_globs: ["src/main/resources/officefloor/**/*.yml"]
-    node_roots:
-      wiring_glob: "src/main/resources/officefloor/rest/**/*.yml"
-      class_regex: 'class:\s*([\w.]+)'
-      node_method: service
+    # The entry surface is the controller a request routes through — which in this stack renders
+    # the pages, so these columns cover the UI's logic.
+    #
+    # No `node_roots` and no `config_globs`: a Spring controller has no separable wired node and
+    # there is no wiring YAML, so the node-closure columns and config_loc come back BLANK. That is
+    # this architecture's answer, not a gap — and it is precisely the difference from
+    # ~/officehq-htmx-officefloor that this arm exists to measure.
+    handler_pattern: "Controller[^:]*::"

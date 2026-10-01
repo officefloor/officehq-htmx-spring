@@ -1,9 +1,21 @@
-# officehq-htmx-officefloor — base repository (server-rendered HTML + htmx + OfficeFloor)
+# officehq-htmx-spring — base repository (server-rendered HTML + htmx + plain Spring Boot)
 
 A **base repository** for the `ui-long-degradation-test` harness — **one technology stack**: the
-UI is **server-rendered Thymeleaf HTML driven by htmx**, backend **OfficeFloor** (within Spring) on
-in-memory H2. It is the third point on the front-end curve, after `~/officehq-react-officefloor`
-(mutative React) and `~/officehq-tanstack-officefloor` (additive React).
+UI is **server-rendered Thymeleaf HTML driven by htmx**, backend **plain Spring Boot** on in-memory
+H2. No OfficeFloor: pages and fragments are `@Controller` methods returning a template name.
+
+This arm exists to **falsify or confirm the inheritance claim**. The `~/officehq-htmx-officefloor`
+arm's front-end additivity was argued to be *inherited* from its additive backend rather than
+engineered into the client. Against that arm only the backend differs — the templates and the
+vendored htmx are byte-identical, because this repo was cloned from it:
+
+* if `htmx-officefloor` holds its structure and this one does not, **inheritance is demonstrated**;
+* if **both** hold, hypermedia is additive on its own — the most practically useful result in the
+  set, since the pattern would then work without adopting OfficeFloor.
+
+The structural difference is exactly this: OfficeFloor requires one wired file per URL, while
+Spring MVC lets handlers accumulate as *methods on a controller*. Whether the agent takes that
+option is the measurement.
 
 This arm tests the strongest form of the thesis: rather than making the *client* additive, it
 removes the client. There is no JavaScript application, no build step and no Node toolchain — an
@@ -43,8 +55,7 @@ checkpoint.
   front-end, different backend, or both), satisfy the same `BASE_CHECKLIST.md`, and point
   `app.repo` at it. Each is its own run.
 
-**Status: green.** `bin/build` produces the one jar and `bin/start` serves the shell. Verified end
-to end through `bin/e2e` against the real jar: the shell renders with its nav built from the bean
-registry, a page added as new files appears in the nav without the layout being touched, a page is a
-real URL that survives a deep link and a browser refresh, and htmx swaps a server-rendered fragment
-into a target. See **[BASE_CHECKLIST.md](./BASE_CHECKLIST.md)**.
+**Status: green.** Verified through `bin/e2e` against the real jar: pages are real URLs rendered by
+Spring MVC, the nav is built from the bean registry, a deep link survives a refresh, and the
+vendored htmx is served from the jar. The packaged jar contains **no OfficeFloor libraries**, and
+every template is byte-identical to `~/officehq-htmx-officefloor`.

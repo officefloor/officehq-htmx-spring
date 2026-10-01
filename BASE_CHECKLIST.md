@@ -6,10 +6,10 @@ This is a **base repository** for `ui-long-degradation-test` (see that repo's `D
 one full-stack English change request per checkpoint — committing each checkpoint on that run
 branch. The base branch is only ever read.
 
-This stack is **server-rendered Thymeleaf + htmx (UI) + OfficeFloor (backend)** on in-memory H2 —
-hence the name `officehq-htmx-officefloor`. There is NO front-end build and no Node toolchain: an
-OfficeFloor procedure takes Spring's `Model` plus OfficeFloor's `ViewResponse` and sends a template
-name (tutorial SpringRestThymeleafHttpServer), and htmx is a vendored file under `static/vendor/`.
+This stack is **server-rendered Thymeleaf + htmx (UI) + plain Spring Boot (backend)** on in-memory
+H2 — hence the name `officehq-htmx-spring`. There is NO front-end build and no Node toolchain: a
+`@Controller` method puts data on Spring's `Model` and returns a template name, and htmx is a
+vendored file under `static/vendor/`. §B's OfficeFloor items do not apply.
 
 **This folder is green** (§A–§H verified; see the UI notes in §B and §E). Because the harness only depends on the *contract* (not the tech), you create a
 new stack as a **home-level sibling** `~/officehq-<frontend>-<backend>` (name both layers, since
@@ -48,8 +48,10 @@ boot, a static-served SPA, an `/actuator/health` readiness probe, and the `/__te
       404s and a refresh re-renders from the server. `static/` is not build output in this stack —
       it holds the vendored htmx, which IS committed (the build and the gate have no network
       egress, so a CDN is not an option).
-- [x] **One URL per YAML file, for pages as well as data.** `officefloor/rest/<path>.<METHOD>.yml`
-      + a logic class + a Thymeleaf template under `templates/`. No `/api/` prefix is needed.
+- [x] **Pages are Spring MVC handlers.** A `@GetMapping` method + a Thymeleaf template under
+      `templates/`. No `/api/` prefix is needed. Unlike the OfficeFloor arm there is no wired file
+      per URL — handlers may accumulate as methods on a controller, which is the difference this
+      arm measures.
 - [x] **The nav is additive without a registry file.** A page contributes a `NavEntry`
       `@Component`; Spring injects the whole collection into `NavRegistry`, and `layout.html` reads
       it as `${@navRegistry.entries()}`. The layout never lists the pages.
