@@ -3,10 +3,9 @@ package net.officefloor.hq.app.web;
 /**
  * One link in the shell's nav bar.
  *
- * <p>A page contributes its own entry by adding a {@code @Component} that implements this — Spring
- * collects every bean of the type, so the shell never holds a list of pages and
- * {@code layout.html} is not edited when one is added. This is the server-side equivalent of a
- * slot registry: the mechanism, written once, and a new page is a new file.
+ * <p>A page contributes its own entry with a {@code @Component} that implements this; Spring
+ * collects every bean of the type, so the shell reads the collection rather than a hard-coded list
+ * of pages ({@code layout.html} renders whatever is present).
  */
 public interface NavEntry {
 

@@ -4,7 +4,7 @@ target/
 node_modules/
 .run/
 # static/ is NOT build output here — it holds vendored assets (htmx) that must be committed
-# (served from the jar; the build and tests run with no network egress).
+# (served from the jar).
 
 # Playwright
 e2e/test-results/

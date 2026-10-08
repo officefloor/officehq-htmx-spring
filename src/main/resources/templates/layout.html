@@ -1,9 +1,8 @@
 <!doctype html>
 <!--/*
-  The whole shell. It renders the nav bar and the page's content fragment — it does NOT know what
-  pages exist (each contributes a NavEntry @Component, which NavRegistry collects) and it holds no
-  state (what is open or filtered is in the URL, because every URL here is a real server route).
-  Nothing about a new page belongs in this file. Do not edit it.
+  The shell. It renders the nav bar and the page's content fragment; it reads no page list (each
+  page contributes a NavEntry @Component, collected by NavRegistry) and holds no view state (what
+  is open or filtered is in the URL, since every URL here is a real server route).
 
   A page template starts with:
       <html th:replace="~{layout :: page(~{::content})}">
@@ -14,8 +13,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>OfficeHQ</title>
-    <!--/* htmx is vendored, not loaded from a CDN: the build and the gate run Landlock-confined
-           with no network egress. */-->
+    <!--/* htmx is vendored and served from the app, not loaded from a CDN. */-->
     <script src="/vendor/htmx.min.js"></script>
   </head>
   <body>

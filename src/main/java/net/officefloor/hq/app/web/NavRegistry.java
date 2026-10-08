@@ -8,10 +8,8 @@ import org.springframework.stereotype.Component;
  * Every {@link NavEntry} bean in the application, in display order.
  *
  * <p>Spring injects the whole collection, so discovery needs no list and no configuration. The
- * layout template reads it as {@code ${@navRegistry.entries()}} — a bean reference, resolved at
- * render time — which is why adding a page never touches the layout.
- *
- * <p>Do not edit. A new nav link is a new {@code NavEntry} {@code @Component}.
+ * layout template reads it as {@code ${@navRegistry.entries()}} — a bean reference resolved at
+ * render time. A nav link is a {@code NavEntry} {@code @Component}.
  */
 @Component
 public class NavRegistry {
