@@ -1,16 +1,15 @@
-# Build output — the agent's committed delta is source only (BASE_CHECKLIST.md §G).
+# Build output.
 target/
 *.jar
 node_modules/
 .run/
-# static/ is NOT build output in this stack — there is no front-end build. It holds vendored
-# assets that must be committed (htmx, served from the jar because the build and the gate run
-# Landlock-confined with no network egress).
+# static/ is NOT build output here — it holds vendored assets (htmx) that must be committed
+# (served from the jar; the build and tests run with no network egress).
 
 # Playwright
 e2e/test-results/
 e2e/playwright-report/
-# The harness copies cpNN specs in per checkpoint; don't commit them to the base.
+# Test specs are provided at run time; keep them out of version control.
 e2e/specs/*
 !e2e/specs/.gitkeep
 /.idea/

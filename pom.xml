@@ -1,22 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  htmx-spring base app. Server-rendered Thymeleaf + htmx on a plain Spring Boot 4 backend — no
-  OfficeFloor. Pages are @Controller methods returning a template name; H2 + Flyway + Actuator.
-
-  This arm FALSIFIES OR CONFIRMS the inheritance claim. The htmx-officefloor arm's front-end
-  additivity was argued to be INHERITED from its additive backend rather than engineered into the
-  client. Against that arm only the backend differs:
-    * if htmx-officefloor holds and this one does not, inheritance is demonstrated;
-    * if BOTH hold, hypermedia is additive on its own — the most practically useful result in the
-      set, since the pattern would then work without adopting OfficeFloor.
+  OfficeHQ — a Spring Boot app. The UI is server-rendered HTML (Thymeleaf, with htmx); pages are
+  Spring MVC @Controller methods. H2 + Flyway + Actuator. No Node toolchain: htmx is a single
+  vendored file under src/main/resources/static.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <!-- Held at Spring Boot 4.1.0, the same host every other arm runs, so only the architecture
-       differs between arms. -->
+  <!-- Standard Spring Boot app parent (4.1.0). -->
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
@@ -34,17 +27,14 @@
   </properties>
 
   <dependencies>
-    <!-- No OfficeFloor: pages and fragments are Spring MVC @Controller methods. -->
-    <!-- Spring Boot hosts: web (serves the SPA from static/ + hosts the HTTP server),
-         data-jpa (H2 access for services), actuator (health probe). -->
+    <!-- Pages and fragments are Spring MVC @Controller methods. -->
+    <!-- Spring Boot hosts: web (HTTP server), data-jpa (H2 access), actuator (health probe). -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
-    <!-- Server-rendered HTML. An OfficeFloor procedure takes a Spring `Model` plus a
-         `net.officefloor.spring.starter.rest.view.ViewResponse` and calls `send("<template>")`;
-         the template lives in src/main/resources/templates (OfficeFloor tutorial
-         SpringRestThymeleafHttpServer). -->
+    <!-- Server-rendered HTML: @Controller methods return a template name; templates live in
+         src/main/resources/templates. -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-thymeleaf</artifactId>
@@ -58,7 +48,7 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
-    <!-- Bean Validation provider (Hibernate Validator) — OfficeFloor REST / Spring bind + @Valid. -->
+    <!-- Bean Validation provider (Hibernate Validator) — bind + @Valid. -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-validation</artifactId>
@@ -76,9 +66,8 @@
     </dependency>
     <!-- REQUIRED under Spring Boot 4: FlywayAutoConfiguration was extracted from
          spring-boot-autoconfigure into this module. Without it, flyway-core is on the classpath but
-         migrations NEVER run on boot (silently — no error, the table is just missing). Version is
-         managed by the parent BOM. Found via the cp01 dry run. flyway-core 12.x has H2 support
-         built in, so no flyway-database-h2 module is needed. -->
+         migrations NEVER run on boot (silently). Version managed by the parent BOM. flyway-core 12.x
+         has H2 support built in, so no flyway-database-h2 module is needed. -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-flyway</artifactId>
@@ -93,9 +82,8 @@
 
   <build>
     <plugins>
-      <!-- No front-end build. This stack has NO Node toolchain: pages are Thymeleaf templates
-           rendered by OfficeFloor procedures and served straight from the jar, and htmx is a
-           single vendored file under src/main/resources/static. -->
+      <!-- No front-end build: pages are Thymeleaf templates served from the jar; htmx is a single
+           vendored file under src/main/resources/static. -->
       <!-- Standard Spring Boot executable jar (main = the @SpringBootApplication class). -->
       <plugin>
         <groupId>org.springframework.boot</groupId>

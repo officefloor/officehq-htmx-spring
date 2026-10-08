@@ -1,32 +1,7 @@
-# What this STACK is, for the harness (~/ui-long-degradation-test). Read at `base-empty`, never
-# from the working tree, so a run always measures the layers the base declared.
+# Per-layer source roots and tooling settings for this project.
 #
-# This arm tests the INHERITANCE claim: htmx-officefloor's front-end additivity was argued to be
-# inherited from its additive backend rather than engineered into the client. Against that arm only
-# the backend differs (pages are @Controller methods, not wired OfficeFloor procedures), so if that
-# arm holds and this one does not, inheritance is demonstrated; if BOTH hold, hypermedia is
-# additive on its own — which would be the most practically useful result in the set.
-#
-# ── READ THIS BEFORE COMPARING THIS ARM'S front-end NUMBERS ──────────────────────────────────
-# This stack's user interface is Thymeleaf MARKUP, and Lizard cannot parse HTML. So for the
-# frontend layer every PARSER-derived column is blank by construction — erosion, impact_*, wmc_*,
-# reedit_rate, node_* — and that is honest rather than a gap: `ext: [html]` declares the language,
-# and a blank must never read as a zero (DESIGN.md §8).
-#
-# What remains for the frontend layer is every GIT-derived measure, which is exactly the set that
-# makes this arm comparable with the two React arms at all:
-#     hot_surface          which templates the run keeps reopening, and churn concentration
-#     reedit_line_stats    settled markup destroyed, and its age in checkpoints
-#     dup_*                duplicated markup (the counter-hypothesis for ANY additive design)
-#     blast_radius_detail  pre-existing templates disturbed vs created
-#     cumulative_impact    surviving change over every changed file, unscoped
-#     class_shape          what kind of unit holds a new rule
-#
-# There is also no `handler_pattern` or `function_package_glob` for the frontend: both are regexes
-# over "<file>::<function>", and templates have no functions. The role-comparable entry surface for
-# this arm is the page-rendering PROCEDURE, which is Java and so sits in the backend layer — a
-# deliberate consequence of the architecture, not an oversight. Expect "front-end erosion" to be
-# unanswerable here and read the git-derived series instead.
+# The UI is Thymeleaf markup (ext: html); parser-derived metrics do not apply to templates and
+# come back blank by construction (never read a blank as zero).
 layers:
   frontend:
     root: src/main/resources/templates
@@ -36,11 +11,4 @@ layers:
     root: src/main/java
     ext: [java]
     jscpd_format: java
-    # The entry surface is the controller a request routes through — which in this stack renders
-    # the pages, so these columns cover the UI's logic.
-    #
-    # No `node_roots` and no `config_globs`: a Spring controller has no separable wired node and
-    # there is no wiring YAML, so the node-closure columns and config_loc come back BLANK. That is
-    # this architecture's answer, not a gap — and it is precisely the difference from
-    # ~/officehq-htmx-officefloor that this arm exists to measure.
     handler_pattern: "Controller[^:]*::"
